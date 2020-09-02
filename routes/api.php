@@ -44,9 +44,10 @@ Route::middleware('auth:api')->group(
 
 		// Student CRUD Routes
 		Route::get('student/view/all','StudentController@viewAll');
-		Route::post('teacher/view/{id}','StudentController@viewSingle');
+		// Route::post('teacher/view/{id}','StudentController@viewSingle');
 		Route::post('student/update/{id}','StudentController@update');
-		Route::post('student/delete/id','StudentController@delete');
+		Route::post('student/delete/{id}','StudentController@delete');
+		Route::get('student/view/{id}','StudentController@edit');
 
 		//Teacher CRUD Routes
 		Route::get('teacher/view/all','TeacherController@viewAll');
@@ -54,6 +55,7 @@ Route::middleware('auth:api')->group(
 		Route::post('teacher/update/{id}','TeacherController@update');
 		Route::post('teacher/delete/{id}','TeacherController@delete');
 		Route::post('teacher/{teacherid}/class/{id}/student/all','TeacherController@studentsView');
+
 
 		// Class CRUD Routes
 		Route::post('class/create','ClassesController@create');
@@ -71,6 +73,10 @@ Route::middleware('auth:api')->group(
 		// Student Assignment Routes
 		Route::post('student/{studentid}/assignment/view','AssignmentController@displayStudentAssignment');
 		Route::post('student/{studentid}/assignment/update/{assignmentid}','AssignmentController@updateStudentAssignment');
+
+		// Class Student Routes
+
+		Route::get('class/{classid}/student/view/all','StudentController@studentView');
 
 
 

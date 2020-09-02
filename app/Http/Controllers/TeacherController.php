@@ -91,7 +91,7 @@ class TeacherController extends Controller
     public function update($id,Request $request)
     {
     	$teacher = teacher::findOrFail($id);
-    	$user = User::where('email',$request->email)->get();
+    	$user = User::where('email',$request->email)->first();
 
     	$teacherData = $request->validate([
 
@@ -144,6 +144,8 @@ class TeacherController extends Controller
 
     	$teacher->delete();
     	$user->delete();
+
+    	return response()->json(['success'=>'Record Deleted'],200);
     }
 
     public function studentsView($classid)
