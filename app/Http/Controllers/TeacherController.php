@@ -73,5 +73,76 @@ class TeacherController extends Controller
         } 
     }
 
+    public function viewAll()
+    {
+    	$teacher = teacher::paginate(10);
+
+    	return response()->json(['success'=>$teacher],200);
+    }
+
+    public function viewSingle($id)
+    {
+    	$teacher = teacher::findOrFail($id);
+
+    	return response()->json(['success'=>$teacher],200);
+    }
+
+    public function update($id,Request $request)
+    {
+    	$teacher = teacher::findOrFail($id);
+    	$user = User::where('email',$request->email)->get();
+
+    	$teacherData = $request->validate([
+
+                'tsc_number'=>'required',
+                'f_name'=>'required',
+                'l_name'=>'required',
+                'telephone'=>'required',
+                'address'=>'required',
+                'date_of_employment'=>'required',
+                'email'=>'email|required',
+                'password'=>'required'
+
+        ]);
+
+         $hash = password_hash($request->password, PASSWORD_BCRYPT);
+    	 $teacherData['password'] = $hash;
+
+    	 $teacher->tsc_number = $request->tsc_number;
+    	 $teacher->f_name = $request->f_name;
+    	 $teacher->l_name = $request->l_name;
+    	 $teacher->telephone = $request->telephone;
+    	 $teacher->address = $request->address;
+    	 $teacher->date_of_employment = $request->date_of_employment;
+    	 $teacher->email = $request->email;
+    	 $teacher->password = $hash;
+
+    	 $user->name = $request->f_name;
+         $user->email = $request->email;
+         $user->password = $hash;
+
+         $teacher->save();
+         $user->save();
+
+         $teacher['token'] = $user->createToken('Teacher Update Token')->accessToken;
+
+        return response()->json(['success'=>$teacher], 200);
+    }
+
+    public function delete($id)
+    {
+    	$pickEmail;
+    	$teacher = teacher::findOrFail($id);
+
+    	foreach ($teacher as $data) 
+    	{
+    		$pickEmail = $data->email;
+    	}
+
+    	$user = User::where('email',$pickEmail)->get();
+
+    	$teacher->delete();
+    	$user->delete();
+    }
 
 }

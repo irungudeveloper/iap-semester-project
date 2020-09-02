@@ -16,13 +16,50 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login','API\AuthController@login');
 Route::post('register','API\AuthController@register');
+
+
+// Teacher Login & Registration //CRUD 
 Route::post('teacher/register','TeacherController@createTeacher');
-// Route::post('teacher/login','TeacherController@loginTeacher');
 Route::post('teacher/login','TeacherController@login');
+Route::get('teacher/view/all','TeacherController@viewAll');
+Route::post('teacher/view/{id}','TeacherController@viewSingle');
+Route::post('teacher/update/{id}','TeacherController@update');
+Route::post('teacher/delete/id','TeacherController@delete');
 
-Route::middleware('auth:api')->group(function(){
 
-	Route::get('reach','API\AuthController@reach');
+// Student Login & Registration //CRUD
+Route::post('student/register','StudentController@createStudent');
+Route::post('student/login','StudentController@login');
+Route::get('student/view/all','StudentController@viewAll');
+Route::post('teacher/view/{id}','StudentController@viewSingle');
+Route::post('student/update/{id}','StudentController@update');
+Route::post('student/delete/id','StudentController@delete');
+
+
+Route::middleware('auth:api')->group(
+	function()
+	{
+
+		Route::get('reach','API\AuthController@reach');
+
+		// Class CRUD Routes
+		Route::post('class/create','ClassesController@create');
+		Route::get('class/view','ClassesController@displayClasses');
+		Route::post('class/view/{id}','ClassesController@edit');
+		Route::post('class/update/{id}','ClassesController@update');
+		Route::post('class/delete/{id}','ClassesController@delete');
+
+		//Teacher Assignment Routes 
+		Route::post('teacher/{teacherid}/assignment/create','AssignmentController@create');
+		Route::post('teacher/{teacherid}/assignment/view','AssignmentController@displayTeacherAssignment');
+		Route::post('teacher/{teacherid}/assignment/update/{assignmentid}','AssignmentController@update');
+		Route::post('teacher/{teacherid}/assignment/delete/{id}','AssignmentController@delete');
+
+		// Student Assignment Routes
+		Route::post('student/{studentid}/assignment/view','AssignmentController@displayStudentAssignment');
+		Route::post('student/{studentid}/assignment/update/{assignmentid}','AssignmentController@updateStudentAssignment');
+
+
 
 });
 

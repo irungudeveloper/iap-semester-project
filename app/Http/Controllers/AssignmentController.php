@@ -44,7 +44,7 @@ class AssignmentController extends Controller
     }
 
     public function displayAll(){
-    	$assignment = Assignment::all();
+    	$assignment = Assignment::paginate(10);
 
     	$assignment['message'] = "Records Fetched Successfully";
     	$assignment['code'] = "200";
