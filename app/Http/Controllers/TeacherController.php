@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use App\teacher;
 use App\User;
+use App\Student;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,6 +144,13 @@ class TeacherController extends Controller
 
     	$teacher->delete();
     	$user->delete();
+    }
+
+    public function studentsView($classid)
+    {
+   		$student = Student::where('class_id',$classid)->get()->paginate(10);
+
+   		return response()->json(['success'=>$student],200);
     }
 
 }
