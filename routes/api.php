@@ -60,9 +60,9 @@ Route::middleware('auth:api')->group(
 		// Class CRUD Routes
 		Route::post('class/create','ClassesController@create');
 		Route::get('class/view','ClassesController@displayClasses');
-		Route::post('class/view/{id}','ClassesController@edit');
+		Route::get('class/view/{id}','ClassesController@edit');
 		Route::post('class/update/{id}','ClassesController@update');
-		Route::post('class/delete/{id}','ClassesController@delete');
+		Route::delete('class/delete/{id}','ClassesController@delete');
 
 		//Teacher Assignment Routes 
 		Route::post('teacher/{teacherid}/assignment/create','AssignmentController@create');
