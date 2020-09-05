@@ -66,9 +66,15 @@ Route::middleware('auth:api')->group(
 		Route::post('student/{studentid}/assignment/update/{assignmentid}','AssignmentController@updateStudentAssignment');
 
 		// Class Student Routes
-
 		Route::get('class/{classid}/student/view/all','StudentController@studentView');
 
+		// Teacher Exam Routes
+		Route::post('exam/{examid}/student/{studentid}/create','ExamsController@createExam');
+		Route::post('exam/{examid}/student/{studentid}/update','ExamsController@updateExam');
+		Route::delete('exam/{examid}/student/{studentid}/delete','ExamsController@deleteStudentExam');
+
+		// Student Exam Routes
+		Route::get('student/{studentid}/exam/view','ExamsController@viewStudentExam');
 
 
 });
