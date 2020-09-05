@@ -21,30 +21,21 @@ Route::post('register','API\AuthController@register');
 // Teacher Login & Registration //CRUD 
 Route::post('teacher/register','TeacherController@createTeacher');
 Route::post('teacher/login','TeacherController@login');
-// Route::get('teacher/view/all','TeacherController@viewAll');
-// Route::post('teacher/view/{id}','TeacherController@viewSingle');
-// Route::post('teacher/update/{id}','TeacherController@update');
-// Route::post('teacher/delete/id','TeacherController@delete');
 
 
 // Student Login & Registration //CRUD
 Route::post('student/register','StudentController@createStudent');
 Route::post('student/login','StudentController@login');
-// Route::get('student/view/all','StudentController@viewAll');
-// Route::post('teacher/view/{id}','StudentController@viewSingle');
-// Route::post('student/update/{id}','StudentController@update');
-// Route::post('student/delete/id','StudentController@delete');
 
 
 Route::middleware('auth:api')->group(
 	function()
 	{
-
+		// Test Authentication Route
 		Route::get('reach','API\AuthController@reach');
 
 		// Student CRUD Routes
 		Route::get('student/view/all','StudentController@viewAll');
-		// Route::post('teacher/view/{id}','StudentController@viewSingle');
 		Route::post('student/update/{id}','StudentController@update');
 		Route::post('student/delete/{id}','StudentController@delete');
 		Route::get('student/view/{id}','StudentController@edit');
@@ -71,7 +62,7 @@ Route::middleware('auth:api')->group(
 		Route::post('teacher/{teacherid}/assignment/delete/{id}','AssignmentController@delete');
 
 		// Student Assignment Routes
-		Route::post('student/{studentid}/assignment/view','AssignmentController@displayStudentAssignment');
+		Route::get('student/{studentid}/assignment/view','AssignmentController@displayStudentAssignment');
 		Route::post('student/{studentid}/assignment/update/{assignmentid}','AssignmentController@updateStudentAssignment');
 
 		// Class Student Routes
@@ -81,8 +72,3 @@ Route::middleware('auth:api')->group(
 
 
 });
-
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-*/

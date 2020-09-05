@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
 use App\Assignment;
+use App\Student;
 
 
 class AssignmentController extends Controller
@@ -59,6 +60,14 @@ class AssignmentController extends Controller
 
     	return $assignment;
 
+    }
+
+    public function displayStudentAssignment($studentid)
+    {
+        $student = Student::where('id',$studentid)->first();
+        $student_class_id = $student->class_id;
+        $assignment = Assignment::where('class_id',$student_class_id)->paginate();
+        return response()->json(['success'=>$assignment]);
     }
 
     public function update($teacherid,$assignmentid,Request $request){
