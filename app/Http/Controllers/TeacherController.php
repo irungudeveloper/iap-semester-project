@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -26,9 +27,10 @@ class TeacherController extends Controller
     	$this->middleware('guest')->except('logout');
     }
 
-    public function createTeacher(Request $request){
+    public function createTeacher(Request $request)
+    {
 
-    	 $teacherData = $request->validate([
+        $validator = Validator::make($request->all(),[
 
                 'tsc_number'=>'required',
                 'f_name'=>'required',
@@ -41,35 +43,42 @@ class TeacherController extends Controller
 
         ]);
 
-    	 $hash = password_hash($request->password, PASSWORD_BCRYPT);
+        if ($validator->passes()) 
+        {
+             $hash = password_hash($request->password, PASSWORD_BCRYPT);
 
-    	 $teacherData['password'] = $hash;
+            $teacherData['password'] = $hash;
 
-        $teacher = teacher::create($teacherData);
+            $teacher = teacher::create($teacherData);
 
-        $user = new User;
+            $user = new User;
 
-        $user->name = $request->f_name;
-        $user->email = $request->email;
-        $user->password = $hash;
+            $user->name = $request->f_name;
+            $user->email = $request->email;
+            $user->password = $hash;
 
-        $user->save();
+            $user->save();
 
-        $teacher['token'] = $user->createToken('Teacher Rgistration Token')->accessToken;
+            $teacher['token'] = $user->createToken('Teacher Rgistration Token')->accessToken;
 
-        return response()->json(['success'=>$teacher], 200);
+            return response()->json(['success'=>$teacher], 200);
         
+        }
+
+    	return response()->json(['error','Please Fill Out All The Fields Required'],406);
 
     }
 
      public function login(Request $request)
      { 
-        if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){ 
+        if(Auth::attempt(['email' => request('email'), 'password' => request('password')]))
+        { 
             $user = Auth::user(); 
             $success['token'] =  $user->createToken('MyApp')-> accessToken; 
             return response()->json(['success' => $success], $this-> successStatus); 
         } 
-        else{ 
+        else
+        { 
             return response()->json(['error'=>'Unauthorised'], 401); 
         } 
     }
@@ -78,56 +87,86 @@ class TeacherController extends Controller
     {
     	$teacher = teacher::paginate(10);
 
-    	return response()->json(['success'=>$teacher],200);
+        if (count($teacher)) 
+        {
+            return response()->json(['success'=>$teacher],200);    
+        }
+
+    	return response()->json(['error','No Records Available']);
     }
 
     public function viewSingle($id)
     {
     	$teacher = teacher::findOrFail($id);
 
-    	return response()->json(['success'=>$teacher],200);
+        if (count($teacher)) 
+        {
+            return response()->json(['success'=>$teacher],200);    
+        }
+
+    	return response()->json(['error','Record Not Found']);
     }
 
     public function update($id,Request $request)
     {
     	$teacher = teacher::findOrFail($id);
-    	$user = User::where('email',$request->email)->first();
 
-    	$teacherData = $request->validate([
+        if (count($teacher)) 
+        {
+            $user = User::where('email',$request->email)->first();
 
-                'tsc_number'=>'required',
-                'f_name'=>'required',
-                'l_name'=>'required',
-                'telephone'=>'required',
-                'address'=>'required',
-                'date_of_employment'=>'required',
-                'email'=>'email|required',
-                'password'=>'required'
+            if (count($user)) 
+            {
 
-        ]);
+                $validator = Validator::make($request->all(),[
 
-         $hash = password_hash($request->password, PASSWORD_BCRYPT);
-    	 $teacherData['password'] = $hash;
+                    'tsc_number'=>'required',
+                    'f_name'=>'required',
+                    'l_name'=>'required',
+                    'telephone'=>'required',
+                    'address'=>'required',
+                    'date_of_employment'=>'required',
+                    'email'=>'email|required',
+                    'password'=>'required'
 
-    	 $teacher->tsc_number = $request->tsc_number;
-    	 $teacher->f_name = $request->f_name;
-    	 $teacher->l_name = $request->l_name;
-    	 $teacher->telephone = $request->telephone;
-    	 $teacher->address = $request->address;
-    	 $teacher->date_of_employment = $request->date_of_employment;
-    	 $teacher->email = $request->email;
-    	 $teacher->password = $hash;
+                ]);
 
-    	 $user->name = $request->f_name;
-         $user->email = $request->email;
-         $user->password = $hash;
+               if ($validator->passes()) 
+               {
+                     $hash = password_hash($request->password, PASSWORD_BCRYPT);
+                     $teacherData['password'] = $hash;
 
-         $teacher->save();
-         $user->save();
+                     $teacher->tsc_number = $request->tsc_number;
+                     $teacher->f_name = $request->f_name;
+                     $teacher->l_name = $request->l_name;
+                     $teacher->telephone = $request->telephone;
+                     $teacher->address = $request->address;
+                     $teacher->date_of_employment = $request->date_of_employment;
+                     $teacher->email = $request->email;
+                     $teacher->password = $hash;
 
-         $teacher['token'] = $user->createToken('Teacher Update Token')->accessToken;
+                     $user->name = $request->f_name;
+                     $user->email = $request->email;
+                     $user->password = $hash;
 
-        return response()->json(['success'=>$teacher], 200);
+                     $teacher->save();
+                     $user->save();
+
+                     $teacher['token'] = $user->createToken('Teacher Update Token')->accessToken;
+
+                    return response()->json(['success'=>$teacher], 200);
+               }
+
+            return response()->json(['error','Please Fil Out All The Fields Required']);
+                
+            }
+
+            return response()->json(['error','User Not Found']);
+                
+        }
+
+        return response()->json(['error','Teacher Record Not Found']);
+    	
     }
 
     public function delete($id)
@@ -152,7 +191,13 @@ class TeacherController extends Controller
     {
    		$student = Student::where('class_id',$classid)->get()->paginate(10);
 
-   		return response()->json(['success'=>$student],200);
+        if (count($student)) 
+        {
+           return response()->json(['success'=>$student],200);
+        }
+
+        return response()->json(['error','No Records Found']);
+   		
     }
 
 }

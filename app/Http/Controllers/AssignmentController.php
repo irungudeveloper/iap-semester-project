@@ -58,8 +58,17 @@ class AssignmentController extends Controller
     public function displayAll(){
     	$assignment = Assignment::paginate(10);
 
-    	$assignment['message'] = "Records Fetched Successfully";
-    	$assignment['code'] = "200";
+        if (count($assignment)) 
+        {
+           $assignment['message'] = "Records Fetched Successfully";
+           $assignment['code'] = "200";
+
+           return response()->json(['success',$assignment]);
+
+        }
+
+        return response()->json(['error','No Records Available']);
+    	
     }
 
     public function displayTeacherAssignment($teacherid){
@@ -96,7 +105,7 @@ class AssignmentController extends Controller
         }
 
         
-         return response()->json(['error','Student Does Not Exist']);
+         return response()->json(['error','Student Record Does Not Exist']);
        
     }
 

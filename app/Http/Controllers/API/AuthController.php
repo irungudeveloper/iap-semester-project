@@ -16,21 +16,24 @@ class AuthController extends Controller
     public function login(Request $request)
     {
  
-    $credentials = [
-        'email' => $request->email,
-        'password' => $request->password
-    ];
+  //   $credentials = [
+  //       'email' => $request->email,
+  //       'password' => $request->password
+  //   ];
  
-    if( auth()->attempt($credentials) )
-    {
-      $user = Auth::user();
-  	  $success['token'] =  $user->createToken('Login Token')->accessToken;
-      return response()->json(['success' => $success], 200);
-    } 
-    else 
-    {
-		return response()->json(['error'=>'Unauthorised'], 401);
-    }
+  //   if( auth()->attempt($credentials) )
+  //   {
+  //     $user = Auth::user();
+  // 	  $success['token'] =  $user->createToken('Login Token')->accessToken;
+  //     return response()->json(['success' => $success], 200);
+  //   } 
+  //   else 
+  //   {
+		// return response()->json(['error'=>'Unauthorised'], 401);
+  //   }
+
+        return response()->json(['error','Unauthorized Access'],401);
+
   }
     
   public function register(Request $request)

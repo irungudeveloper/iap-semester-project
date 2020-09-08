@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Classes;
 
 class ClassesController extends Controller
@@ -20,23 +21,28 @@ class ClassesController extends Controller
     {
     	$class = new Classes;
 
-    	$classdata = $request->validate([
+      $validator = Validator::make($request->all(),[
 
-    		'class_name'=>'required',
-    		'capacity'=>'required'
+          'class_name'=>'required',
+          'capacity'=>'required'
 
-    	]);
+      ]);
+
+    	if ($validator->passes()) 
+      {
+        $class->class_name = $request->class_name;
+        $class->capacity = $request->capacity;
+
+        $class->save();
+
+        $response['message'] = "Class Created Successfully";
+        $response['code'] = "201";
+
+        return $response;
+      }
 
 
-    	$class->class_name = $request->class_name;
-    	$class->capacity = $request->capacity;
-
-    	$class->save();
-
-    	$response['message'] = "Class Created Successfully";
-    	$response['code'] = "201";
-
-    	return $response;
+    return response()->json(['error','Please Fill Out All The Fields Required']);
 
     }
 
@@ -44,20 +50,32 @@ class ClassesController extends Controller
    	{
    		$class = Classes::paginate(10);
 
-   		$class['message'] = "Records Fetched Successfully";
-   		$class['code'] = "200";
+      if (count($class)) 
+      {
+        $class['message'] = "Records Fetched Successfully";
+        $class['code'] = "200";
 
-   		return $class;
+        return $class;
+      }
+
+      return response()->json(['error','No Records Available']);
+
+   		
    	}
 
    	public function edit($id)
    	{
    		$class = Classes::findOrFail($id);
 
-   		$class['message'] = "Records Fetched Successfully";
-   		$class['code'] = "200";
+      if (count($class)) 
+      {
+        $class['message'] = "Records Fetched Successfully";
+        $class['code'] = "200";
 
-   		return $class;
+        return $class;
+      }
+
+   		return response()->json(['error','No Records Available']);
    	}
 
    	public function update($id, Request $request)
@@ -65,22 +83,27 @@ class ClassesController extends Controller
 
    		$class = Classes::findOrFail($id);
 
-   		$classdata = $request->validate([
+      $validator = Validator::make($request->all(),[
 
-   			'class_name'=>'required',
-   			'capacity'=>'required'
+            'class_name'=>'required',
+            'capacity'=>'required'
 
-   		]);
+      ]);
 
-   		$class->class_name = $request->class_name;
-   		$class->capacity = $request->capacity;
+   	if ($validator->passes()) 
+    {
+      $class->class_name = $request->class_name;
+      $class->capacity = $request->capacity;
 
-   		$class->save();
+      $class->save();
 
-   		$class['message'] = "Record Updated Successfully";
-   		$class['code'] = "200";
+      $class['message'] = "Record Updated Successfully";
+      $class['code'] = "200";
 
-   		return $class;
+      return $class;
+    }
+
+   		return response()->json(['error','No Records Found']);
 
    	}
 

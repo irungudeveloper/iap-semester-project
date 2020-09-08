@@ -101,9 +101,14 @@ class ExamsController extends Controller
 				['exam_id',$examid],
 		])->first();
 
-		$exams->delete();
+		if (count($exams)) 
+		{
+			$exams->delete();
 
-		return response()->json(['success','Record Successfully Deleted']);
+			return response()->json(['success','Record Successfully Deleted']);
+		}
+
+		return response()->json(['error','Record Not Found']);
 	}
 
 }
